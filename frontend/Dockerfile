@@ -1,25 +1,24 @@
-#stage 1 builder
+#===== BUILD =====
 FROM node:20-alpine AS builder
 
 WORKDIR /frontend
 
 COPY package.json package-lock.json tsconfig.json .
 
-RUN npm install
+RUN npm ci
 
-COPY public/ ./public/
+COPY public/ ./public/ 
 
 COPY src/ ./src/
 
-#stage 2 tests
+RUN npm run build
 
-FROM builder AS test
-RUN npm run test -- --watchAll=false
 
-# stage 3 final
-FROM test AS final
-EXPOSE 3000
-ENTRYPOINT ["npm"]
+# ===== RUNTIME =====
+FROM nginx:alpine
 
-CMD ["start"]
+COPY --from=builder /frontend/build /usr/share/nginx/html
 
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]
