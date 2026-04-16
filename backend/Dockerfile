@@ -11,14 +11,20 @@ COPY /src ./src/
 
 RUN mvn package -DskipTests
 
-## JRE starts .jar stage 3
+## JRE starts .jar stage 2
 
-FROM eclipse-temurin:17-jre AS final 
+FROM eclipse-temurin:17-jre-alpine AS final 
+
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 
 WORKDIR /backend
 
-EXPOSE 8080 
-
 COPY --from=build /backend/target/*.jar backend.jar
+
+RUN chown appuser:appgroup backend.jar
+
+USER appuser
+
+EXPOSE 8080 
 
 ENTRYPOINT ["java", "-jar", "backend.jar"]
