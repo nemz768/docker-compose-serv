@@ -6,6 +6,9 @@
 #     - build
 #     - prod
 
+stages:
+  - test-front
+
 
 test-front:
   script:
