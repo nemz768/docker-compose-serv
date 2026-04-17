@@ -1,0 +1,15 @@
+# name: deploy to wsl 
+
+# pipeline:
+#   stages:
+#     - test
+#     - build
+#     - prod
+
+
+test-front:
+  script:
+    - echo 'Запуск тестов активирован'
+    - cd frontend
+    - npm ci
+    - npm run test
